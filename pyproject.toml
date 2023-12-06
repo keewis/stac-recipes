@@ -1,0 +1,23 @@
+[project]
+name = "stac-recipes"
+requires-python = ">= 3.10"
+license = {text = "Apache-2.0"}
+dependencies = []
+dynamic = ["version"]
+
+[build-system]
+requires = ["setuptools>=64.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["stac_recipes"]
+
+[tool.setuptools_scm]
+fallback_version = "9999"
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+float_to_top = true
+default_section = "THIRDPARTY"
+known_first_party = "stac_recipes"
