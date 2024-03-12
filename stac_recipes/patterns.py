@@ -16,4 +16,4 @@ class FilePattern:
 
     def items(self):
         for ts in self.time:
-            yield ts, self.path_fn(ts)
+            yield ts.isoformat(), self.path_fn(ts)
