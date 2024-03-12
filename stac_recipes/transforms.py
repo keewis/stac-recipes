@@ -30,21 +30,6 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
 
 
 @dataclass
-class Branch(beam.PTransform):
-    transforms: list[beam.PTransform]
-
-    def expand(self, pcoll):
-        for transform in self.transforms:
-            yield pcoll | transform
-
-
-@dataclass
-class Passthrough(beam.PTransform):
-    def expand(self, pcoll):
-        return pcoll
-
-
-@dataclass
 class CreateStacItem(beam.PTransform):
     template: pystac.Item | Callable
     postprocess: Callable = passthrough
