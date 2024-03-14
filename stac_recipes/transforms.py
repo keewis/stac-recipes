@@ -15,18 +15,20 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
     if xstac_kwargs is None:
         xstac_kwargs = {}
 
-    index, ds = indexed
+    index, elem = indexed
 
-    if callable(template):
-        template = template(ds)
+    with elem as ds:
+        ds_ = xstac.fix_attrs(ds)
+        if callable(template):
+            template = template(ds_)
 
-    item = xstac.xarray_to_stac(
-        xstac.fix_attrs(ds),
-        template,
-        **xstac_kwargs,
-    )
+        item = xstac.xarray_to_stac(
+            ds_,
+            template,
+            **xstac_kwargs,
+        )
 
-    return postprocess(item, ds)
+        return postprocess(item, ds_)
 
 
 @dataclass
