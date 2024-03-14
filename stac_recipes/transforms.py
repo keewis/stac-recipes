@@ -33,6 +33,8 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
 
 @dataclass
 class CreateStacItem(beam.PTransform):
+    """create STAC items from files using xstac"""
+
     template: pystac.Item | Callable
     postprocess: Callable = passthrough
     xstac_kwargs: dict = field(default_factory=dict)
