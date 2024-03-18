@@ -1,9 +1,9 @@
 name: stac-recipes-tests
 channels:
-- conda-forge
+  - conda-forge
 dependencies:
-- python=3.11
-- ipython
-- pre-commit
-- pytest
-- pytest-reportlog
+  - python=3.11
+  - ipython
+  - pre-commit
+  - pytest
+  - pytest-reportlog
