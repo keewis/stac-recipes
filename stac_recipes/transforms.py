@@ -128,11 +128,32 @@ class CreateCollection(beam.PTransform):
         )
 
 
-def combine_into_catalog(collections, template):
-    catalog = template(collections)
-    catalog.add_children(collections)
+@dataclass
+class CreateRootCatalog(beam.CombineFn):
+    template: callable
 
-    return catalog
+    def create_accumulator(self):
+        return None
+
+    def add_input(self, catalog, input):
+        name, collection = input
+        if catalog is None:
+            catalog = self.template(collection)
+
+        cat = catalog.clone()
+        cat.add_child(collection)
+
+        return cat
+
+    def merge_accumulators(self, catalogs):
+        merged = catalogs[0].clone()
+        for cat in catalogs[1:]:
+            merged.add_child(cat.clone())
+
+        return merged
+
+    def extract_output(self, catalog):
+        return catalog
 
 
 @dataclass
@@ -141,5 +162,5 @@ class CreateCatalog(beam.PTransform):
 
     def expand(self, pcoll):
         return pcoll | "Create a root catalog" >> beam.CombineGlobally(
-            curry(combine_into_catalog, template=self.template)
+            CreateRootCatalog(template=self.template)
         )
