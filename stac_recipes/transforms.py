@@ -50,127 +50,66 @@ class CreateStacItem(beam.PTransform):
         )
 
 
-def _extract_keywords(attrs, spec):
-    if not isinstance(spec, str):
-        return spec
-    else:
-        return attrs.get(spec.removeprefix("attr:"))
-
-
 @dataclass
 class CombineAsCollection(beam.CombineFn):
-    id: str = "{attrs[id]}"
-    title: str = "{attrs[title]}"
-    description: str = "{attrs[description]}"
+    template: callable
 
-    keywords: list | str = field(default_factory=list)
-    extra_fields: dict = field(default_factory=dict)
-    providers: list = field(default_factory=list)
-
-    spatial_extent: dict | str = "from_items"
-    temporal_extent: dict | str = "from_items"
-
-    license: str = "proprietary"
+    spatial_extent: list[float] | str = "from_items"
+    temporal_extent: list[str] | str = "from_items"
 
     postprocess: callable = None
 
     def create_accumulator(self):
-        return pystac.Collection(
-            id="",
-            title=None,
-            description=None,
-            extent=pystac.Extent.from_dict(
-                {
-                    "spatial": {"bbox": [-180, -90, 180, 90]},
-                    "temporal": {"interval": [["1900-01-01", "2100-01-01"]]},
-                }
-            ),
-            keywords=[],
-            extra_fields={},
-            providers=[],
-        )
+        return None
 
-    def add_input(self, accumulator, input):
-        attrs = input.properties.pop("attrs", {})
-
-        if accumulator.id == "":
+    def add_input(self, col, input):
+        if col is None:
             # fresh accumulator
-            accumulator.id = self.id.format(attrs=attrs)
-            accumulator.title = self.title.format(attrs=attrs)
-            accumulator.description = self.description.format(attrs=attrs)
+            col = self.template(col, input)
 
-            accumulator.keywords = _extract_keywords(attrs, self.keywords)
-            accumulator.extra_fields = self.extra_fields
-            accumulator.providers = self.providers
+        col.add_item(input)
 
-            accumulator.license = self.license.format(attrs=attrs)
+        return col
 
-        accumulator.add_item(input)
+    def merge_accumulators(self, collections):
+        merged = collections[0].clone()
+        for col in collections[1:]:
+            merged.add_items(col.get_items())
 
-        return accumulator
+        return merged
 
-    def merge_accumulators(self, accumulators):
-        merged = accumulators[0].clone()
-        for cat in accumulators[1:]:
-            merged.add_items(cat.get_items())
-
+    def extract_output(self, col):
         if self.spatial_extent == "from_items" or self.temporal_extent == "from_items":
-            merged.update_extent_from_items()
+            col.update_extent_from_items()
 
         if self.spatial_extent == "global":
-            merged.extent.spatial = pystac.SpatialExtent.from_dict(
-                {"bboxes": [-180, -90, 180, 90]}
+            col.extent.spatial = pystac.SpatialExtent.from_dict(
+                {"bbox": [-180, -90, 180, 90]}
             )
         elif isinstance(self.spatial_extent, dict):
-            merged.extent.spatial = pystac.SpatialExtent.from_dict(self.spatial_extent)
+            col.extent.spatial = pystac.SpatialExtent.from_dict(self.spatial_extent)
         elif self.spatial_extent != "from_items":
             raise ValueError(f"unknown spatial extent: {self.spatial_extent}")
 
         if isinstance(self.temporal_extent, dict):
-            merged.extent.temporal = pystac.TemporalExtent.from_dict(
-                self.temporal_extent
-            )
+            col.extent.temporal = pystac.TemporalExtent.from_dict(self.temporal_extent)
         elif self.temporal_extent != "from_items":
             raise ValueError(f"unknown temporal extent: {self.temporal_extent}")
 
-        return merged
-
-    def extract_output(self, accumulator):
         if self.postprocess is not None:
-            return self.postprocess(accumulator)
+            return self.postprocess(col)
 
-        return accumulator
+        return col
 
 
 @dataclass
 class CreateCollection(beam.PTransform):
-    id: str = "{attrs[id]}"
-    title: str = ""
-    description: str = ""
+    template: callable
 
-    keywords: list | str = field(default_factory=list)
-    extra_fields: dict = field(default_factory=dict)
-    providers: list = field(default_factory=list)
-
-    spatial_extent: dict | str = "from_items"
-    temporal_extent: dict | str = "from_items"
-
-    license: str = "proprietary"
+    spatial_extent: list[float | int] | str = "from_items"
+    temporal_extent: list[str] | str = "from_items"
 
     postprocess: callable = None
-
-    combine_kwargs: dict = field(init=False, repr=False, default_factory=dict)
-
-    def __post_init__(self):
-        self.combine_kwargs = {
-            "id": self.id,
-            "title": self.title,
-            "description": self.description,
-            "spatial_extent": self.spatial_extent,
-            "temporal_extent": self.temporal_extent,
-            "license": self.license,
-            "postprocess": self.postprocess,
-        }
 
     def expand(self, pcoll):
         return (
@@ -178,5 +117,12 @@ class CreateCollection(beam.PTransform):
             | "Group by collection name"
             >> beam.GroupBy(lambda it: it.properties["collection"])
             | "Combine to collection"
-            >> beam.CombineValues(CombineAsCollection(**self.combine_kwargs))
+            >> beam.CombineValues(
+                CombineAsCollection(
+                    template=self.template,
+                    postprocess=self.postprocess,
+                    spatial_extent=self.spatial_extent,
+                    temporal_extent=self.temporal_extent,
+                )
+            )
         )
