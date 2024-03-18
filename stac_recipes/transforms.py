@@ -126,3 +126,20 @@ class CreateCollection(beam.PTransform):
                 )
             )
         )
+
+
+def combine_into_catalog(collections, template):
+    catalog = template(collections)
+    catalog.add_children(collections)
+
+    return catalog
+
+
+@dataclass
+class CreateCatalog(beam.PTransform):
+    template: callable
+
+    def expand(self, pcoll):
+        return pcoll | "Create a root catalog" >> beam.CombineGlobally(
+            curry(combine_into_catalog, template=self.template)
+        )
