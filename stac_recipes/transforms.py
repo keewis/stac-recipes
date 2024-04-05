@@ -197,6 +197,8 @@ def dehydrate_catalog(cat, dest_href, catalog_type):
             continue
 
         child = link.target
+        child.set_parent(cat.get_self_href())
+        child.set_root(cat.get_root())
 
         if dest_href is not None:
             rel_href = make_relative_href(child.self_href, cat.self_href)
@@ -212,6 +214,10 @@ def dehydrate_catalog(cat, dest_href, catalog_type):
             continue
 
         item = link.target
+        # set the root / parent links
+        item.set_parent(cat.get_self_href())
+        item.set_collection(cat)
+        item.set_root(cat.get_root())
 
         if dest_href is not None:
             rel_href = make_relative_href(item.self_href, cat.self_href)
