@@ -175,6 +175,7 @@ def maybe_normalize_hrefs(cat, href, normalize=True):
 
 
 def dehydrate_catalog(cat, dest_href, catalog_type):
+    # TODO: is this actually what dehydrate means?
     if catalog_type == pystac.CatalogType.ABSOLUTE_PUBLISHED:
         catalog_self_link = True
     elif catalog_type != pystac.CatalogType.SELF_CONTAINED:
