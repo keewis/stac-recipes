@@ -24,11 +24,16 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
         if callable(template):
             template = template(ds_)
 
-        item = xstac.xarray_to_stac(
-            ds_,
-            template,
-            **xstac_kwargs,
-        )
+        try:
+            item = xstac.xarray_to_stac(
+                ds_,
+                template,
+                **xstac_kwargs,
+            )
+        except Exception as e:
+            raise RuntimeError(
+                f"failed to extract metadata from dataset:\n{repr(ds)}"
+            ) from e
 
         return postprocess(item, ds_)
 
