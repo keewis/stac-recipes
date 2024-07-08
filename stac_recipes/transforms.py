@@ -24,11 +24,16 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
         if callable(template):
             template = template(ds_)
 
-        item = xstac.xarray_to_stac(
-            ds_,
-            template,
-            **xstac_kwargs,
-        )
+        try:
+            item = xstac.xarray_to_stac(
+                ds_,
+                template,
+                **xstac_kwargs,
+            )
+        except Exception as e:
+            raise RuntimeError(
+                f"failed to extract metadata from dataset:\n{repr(ds)}"
+            ) from e
 
         return postprocess(item, ds_)
 
@@ -244,9 +249,14 @@ def store_as_json(data):
 
     stac_io = pystac.StacIO.default()
 
-    obj.save_object(
-        dest_href=href, include_self_link=include_self_link, stac_io=stac_io
-    )
+    try:
+        obj.save_object(
+            dest_href=href, include_self_link=include_self_link, stac_io=stac_io
+        )
+    except Exception as e:
+        e.add_note(href)
+
+        raise
 
     return href
 
