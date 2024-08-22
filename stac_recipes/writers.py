@@ -90,3 +90,22 @@ def store_as_json(data):
         raise
 
     return href
+
+
+def store_collections_as_pgstac(collections, method, postgresql_options):
+    import pypgstac.db
+    import pypgstac.load
+
+    db = pypgstac.db.DB(**postgresql_options)
+    loader = pypgstac.load.Loader(db)
+    loader.load_collections([col.to_dict() for col in collections], method=method)
+
+
+def store_items_as_pgstac(items, method, postgresql_options):
+    import pypgstac.db
+    import pypgstac.load
+
+    db = pypgstac.db.DB(**postgresql_options)
+    loader = pypgstac.load.Loader(db)
+
+    loader.load_items([item.to_dict() for item in items], method=method)
