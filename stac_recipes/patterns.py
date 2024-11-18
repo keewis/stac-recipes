@@ -1,5 +1,5 @@
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Callable, Sequence
 
 from pangeo_forge_recipes.patterns import FileType
 from tlz.itertoolz import identity
