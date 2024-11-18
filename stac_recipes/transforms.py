@@ -1,6 +1,6 @@
 import os
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
 
 import apache_beam as beam
 import pystac
