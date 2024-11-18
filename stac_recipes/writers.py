@@ -12,6 +12,7 @@ def maybe_normalize_hrefs(cat, href, normalize=True):
 
 def dehydrate_catalog(cat, dest_href, catalog_type):
     # TODO: is this actually what dehydrate means?
+    # TODO: call `shapely.geometry.mapping` on all geometries
     if catalog_type == pystac.CatalogType.ABSOLUTE_PUBLISHED:
         catalog_self_link = True
     elif catalog_type != pystac.CatalogType.SELF_CONTAINED:
