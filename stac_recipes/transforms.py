@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
@@ -6,7 +8,12 @@ import pystac
 import xstac
 from tlz.functoolz import curry
 
-from stac_recipes.writers import dehydrate, maybe_normalize_hrefs, store_as_json
+from stac_recipes.writers import (
+    dehydrate,
+    maybe_normalize_hrefs,
+    store_as_json,
+    store_items_to_pgstac,
+)
 
 
 def passthrough(item, ds):
@@ -191,4 +198,14 @@ class ToStaticJson(beam.PTransform):
                 dehydrate, catalog_type=self.catalog_type, dest_href=self.href
             )
             | "Write to disk" >> beam.Map(store_as_json)
+        )
+
+
+@dataclass
+class ToPgSTAC(beam.Transform):
+    database_config: dict
+
+    def expand(self, pcoll):
+        return pcoll | "Write items to database" >> beam.Map(
+            store_items_to_pgstac, options=self.database_config
         )
