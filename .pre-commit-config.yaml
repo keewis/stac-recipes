@@ -37,7 +37,7 @@ repos:
         additional_dependencies: ["black==24.10.0"]
       - id: blackdoc-autoupdate-black
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.8.0
+    rev: 0.8.1
     hooks:
       - id: nbstripout
         args: [--extra-keys=metadata.kernelspec metadata.language_info.version]
