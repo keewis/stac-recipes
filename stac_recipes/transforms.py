@@ -8,13 +8,6 @@ import pystac
 import xstac
 from tlz.functoolz import curry
 
-from stac_recipes.writers import (
-    dehydrate,
-    maybe_normalize_hrefs,
-    store_as_json,
-    store_items_to_pgstac,
-)
-
 
 def passthrough(item, ds):
     return item
@@ -187,6 +180,12 @@ class ToStaticJson(beam.PTransform):
     catalog_type: pystac.CatalogType = pystac.CatalogType.RELATIVE_PUBLISHED
 
     def expand(self, pcoll):
+        from stac_recipes.writers.json import (
+            dehydrate,
+            maybe_normalize_hrefs,
+            store_as_json,
+        )
+
         return (
             pcoll
             | "Normalize hrefs"
@@ -206,6 +205,8 @@ class ToPgSTAC(beam.Transform):
     database_config: dict
 
     def expand(self, pcoll):
+        from stac_recipes.writers.pgstac import store_to_pgstac
+
         return pcoll | "Write items to database" >> beam.Map(
-            store_items_to_pgstac, options=self.database_config
+            store_to_pgstac, options=self.database_config
         )
