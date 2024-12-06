@@ -207,6 +207,7 @@ class ToPgSTAC(beam.Transform):
     def expand(self, pcoll):
         from stac_recipes.writers.pgstac import store_to_pgstac
 
+        # TODO: detect the type (collection / item) from the pcollection
         return pcoll | "Write items to database" >> beam.Map(
             store_to_pgstac, options=self.database_config
         )
