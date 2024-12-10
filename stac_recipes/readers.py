@@ -6,7 +6,7 @@ import pystac
 import yaml
 
 number_re = r"-?\d+(?:\.\d+)?"
-bbox_re = re.compile(rf"bbox\((?P<parts>(?:{number_re}, ){3,}{number_re})\)")
+bbox_re = re.compile(rf"bbox\((?P<parts>(?:{number_re}, ){{3,5}}{number_re})\)")
 
 
 def parse_spatial_extent(spatial):
