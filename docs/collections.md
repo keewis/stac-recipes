@@ -95,3 +95,7 @@ Where `spatial` can be the string `"global"`, a bbox string or a list of bbox st
 "/YYYY-MM-DDTHH:MM:SSZ"
 "YYYY-MM-DDTHH:MM:SSZ/"
 ```
+
+### Providers
+
+Providers translate the STAC spec's provider objects directly to yaml. The only difference is that `description` should use `>-` for multi-line strings.
