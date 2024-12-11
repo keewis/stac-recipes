@@ -1,0 +1,43 @@
+- id: "AVHRR_SST_METOP_B-OSISAF-L2P-v1.0"
+  description: >-
+    Level 2 sub-skin Sea Surface Temperature derived from AVHRR on Metop, global and provided in full-resolution swath
+    (1 km at nadir), in GHRSST compliant netCDF format.
+
+    The satellite input data has successively come from Metop-A, Metop-B and Metop-C level 1 data processed at EUMETSAT.
+    SST is retrieved from AVHRR infrared channels (3.7, 10.8 and 12.0 µm) using a multispectral algorithm and a cloud
+    mask. Atmospheric profiles of water vapor and temperature from a numerical weather prediction model, Sea Surface
+    Temperature from an analysis, together with a radiative transfer model, are used to correct the multispectral
+    algorithm for regional and seasonal biases due to changing atmospheric conditions.
+
+    The quality of the products is monitored regularly by daily comparison of the satellite estimates against buoy
+    measurements.The product format is compliant with the GHRSST Data Specification (GDS) version 2. Users are advised
+    to use data only with quality levels 3,4 and 5.
+  extent:
+    spatial: "global"
+    temporal: "2016-01-19T00:00:00Z/"
+  title: >-
+    EUMETSAT OSI SAF Full resolution Metop-B Sea Surface Temperature metagranules
+  license: "proprietary"
+  keywords:
+    - "Oceans"
+    - "Ocean Temperature"
+    - "Sea Surface Temperature"
+  providers:
+    - name: "CMEMS"
+      roles: ["host"]
+      url: "https://marine.copernicus.eu"
+    - name: "Ifremer"
+      roles:
+        - "producer"
+      url: "https://doi.org/10.48670/mds-00329"
+  links:
+    - rel: "license"
+      href: "https://marine.copernicus.eu/user-corner/service-commitments-and-licence"
+      title: "Legal notice of the CMEMS service"
+    - rel: "cite-as"
+      href: "https://doi.org/10.48670/mds-00329"
+      title: "Citeable DOI"
+  # optionally, assets:
+  assets:
+    # TODO: add link to thumbnail / additional resources
+    {}
