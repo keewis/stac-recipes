@@ -49,21 +49,51 @@ As a reminder, yaml allows multi-line strings:
 ```
 
 The difference between `>` and `|` is that `>` concatenates all the lines, while `|` keeps the newlines. Additionally,
-`>-` or `|-` remove the trailing newline, while `>`, `|` and `>+` and `|+` keep the new line.
+`>-` or `|-` remove the trailing newline, while `>`, `|` and `>+` and `|+` keep the trailing newline.
 
 ## Structure of the STAC collection object
 
 STAC collection objects contain the following fields:
 
-| name            | type     | description                                                                               |
-| --------------- | -------- | ----------------------------------------------------------------------------------------- |
-| id              | str      | unique ID of the collection                                                               |
-| description     | str      | Description of the collection. Can contain fancy markdown. Typically a multi-line string. |
-| extent          | dict     | Spatial and temporal [extent](#spatial-extent)                                            |
-| title           | str      | title of the collection.                                                                  |
-| stac_extensions | [str]    | list of [stac extensions](#stac-extensions) used by the collection object.                |
-| license         | str      | Short license name (see the stac spec for the definition)                                 |
-| keywords        | [str]    | list of keywords                                                                          |
-| providers       | [object] | list of [providers](#providers)                                                           |
-| links           | [object] | list of [links](#links)                                                                   |
-| assets          | [object] | list of [assets](#assets)                                                                 |
+| name              | type       | description                                                                                 |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------- |
+| id                | str        | unique ID of the collection                                                                 |
+| description       | str        | Description of the collection. Can contain fancy markdown. Typically a multi-line string.   |
+| extent            | dict       | Spatial and temporal [extent](#spatial-extent)                                              |
+| title             | str        | title of the collection.                                                                    |
+| stac_extensions   | [str]      | list of [stac extensions](#stac-extensions) used by the collection object.                  |
+| license           | str        | Short license name (see the stac spec for the definition)                                   |
+| keywords          | [str]      | list of keywords                                                                            |
+| providers         | [object]   | list of [providers](#providers)                                                             |
+| links             | [object]   | list of [links](#links)                                                                     |
+| assets            | [object]   | list of [assets](#assets)                                                                   |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------- |
+
+Most of the keys are defined as in the [STAC collection spec](https://github.com/radiantearth/stac-spec/blob/master/collection-spec/collection-spec.md).
+
+### Extent
+
+The extent is a simplified version of its base in the STAC spec. It must contain the following keys:
+
+| name       | type           | description                             |
+| ---------- | -------------- | --------------------------------------- |
+| spatial    | str \| [str]   | String describing the spatial extent.   |
+| temporal   | str \| [str]   | String describing the spatial extent.   |
+| ---------- | -------------- | --------------------------------------- |
+
+Where `spatial` can be the string `"global"`, a bbox string or a list of bbox strings. Each bbox string has the format
+
+```
+"bbox(minx, miny, maxx, maxy)"
+"bbox(minx, miny, minh, maxx, maxy, maxh)"
+```
+
+(the whitespace after the `,` is required)
+
+`temporal` can be either a single interval string or a list of interval strings. Each interval string has the format
+
+```
+"YYYY-MM-DDTHH:MM:SSZ/YYYY-MM-DDTHH:MM:SSZ"
+"/YYYY-MM-DDTHH:MM:SSZ"
+"YYYY-MM-DDTHH:MM:SSZ/"
+```
