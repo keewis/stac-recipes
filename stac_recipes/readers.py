@@ -71,7 +71,10 @@ def spec_to_pystac(colspec: dict) -> pystac.Collection:
     return col
 
 
-def open_collections(path: pathlib.Path) -> Generator[pystac.Collection]:
+def open_collections(path: str | pathlib.Path) -> Generator[pystac.Collection]:
+    if isinstance(path, str):
+        path = pathlib.Path(path)
+
     collections = yaml.safe_load(path.read_text())
 
     for col_spec in collections:
