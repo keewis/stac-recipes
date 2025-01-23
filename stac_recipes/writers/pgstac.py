@@ -4,8 +4,10 @@ import pystac
 from pypgstac.db import DB
 from pypgstac.load import Loader
 
+ItemType = tuple[str, pystac.STACObject]
 
-def store_to_pgstac(objs: Sequence[pystac.STACObject], *, type, method, options):
+
+def store_to_pgstac(objs: ItemType | Sequence[ItemType], *, type, method, options):
     mappings = [obj.to_dict() for obj in objs]
 
     db = DB(**options)
