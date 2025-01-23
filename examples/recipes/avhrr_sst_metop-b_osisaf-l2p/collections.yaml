@@ -1,0 +1,32 @@
+- id: "AVHRR_SST_METOP_B-OSISAF-L2P-v1.0"
+  description: >-
+    The satellite input data has successively come from Metop-A, Metop-B and Metop-C level 1 data processed at EUMETSAT. SST is retrieved from AVHRR infrared channels (3.7, 10.8 and 12.0 µm) using a multispectral algorithm and a cloud mask.
+    Atmospheric profiles of water vapor and temperature from a numerical weather prediction model, Sea Surface Temperature from an analysis, together with a radiative transfer model, are used to correct the multispectral algorithm for regional and seasonal biases due to changing atmospheric conditions.
+    The quality of the products is monitored regularly by daily comparison of the satellite estimates against buoy measurements.
+    The product format is compliant with the GHRSST Data Specification (GDS) version 2. Users are advised to use data only with quality levels 3,4 and 5.
+  extent:
+    spatial: "global"
+    temporal: "2016-01-19T08:07:03Z/"
+  title: >-
+    EUMETSAT OSI SAF Full resolution Metop-B Sea Surface Temperature metagranules
+  license: "no conditions apply"
+  keywords:
+    - "Oceans"
+    - "Ocean Temperature"
+    - "Sea Surface Temperature"
+  providers:
+    - name: "EUMETSAT"
+      roles: ["producer"]
+      url: "https://user.eumetsat.int/catalogue/EO:EUM:DAT:METOP:MGR-SST"
+    - name: "Ifremer"
+      roles: ["host"]
+  links:
+    # no license
+    # - rel: "license"
+    #   href: ""
+    - rel: "cite-as"
+      href: "https://dx.doi.org/10.15770/EUM_SAF_OSI_NRT_2013"
+      title: "Citeable DOI"
+  # optionally, assets:
+  # TODO: add link to thumbnail / additional resources
+  assets: {}
