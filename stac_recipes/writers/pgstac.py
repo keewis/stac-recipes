@@ -8,7 +8,12 @@ ItemType = tuple[str, pystac.STACObject]
 
 
 def store_to_pgstac(objs: ItemType | Sequence[ItemType], *, type, method, options):
-    mappings = [obj.to_dict() for obj in objs]
+    if not isinstance(objs, list):
+        objs = [objs]
+
+    mappings = [
+        obj.to_dict() if isinstance(obj, pystac.STACObject) else obj for _, obj in objs
+    ]
 
     db = DB(**options)
     loader = Loader(db)
