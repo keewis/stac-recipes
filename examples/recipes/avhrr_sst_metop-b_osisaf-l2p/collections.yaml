@@ -14,7 +14,7 @@
     to use data only with quality levels 3,4 and 5.
   extent:
     spatial: "global"
-    temporal: "2016-01-19T00:00:00Z/"
+    temporal: "2016-01-19T08:07:03Z/"
   title: >-
     EUMETSAT OSI SAF Full resolution Metop-B Sea Surface Temperature metagranules
   license: "proprietary"
