@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 import pystac
-from pypgstac.db import DB
+from pypgstac.db import PgstacDB
 from pypgstac.load import Loader
 
 ItemType = tuple[str, pystac.STACObject]
@@ -15,12 +15,12 @@ def store_to_pgstac(objs: ItemType | Sequence[ItemType], *, type, method, option
         obj.to_dict() if isinstance(obj, pystac.STACObject) else obj for _, obj in objs
     ]
 
-    db = DB(**options)
+    db = PgstacDB(**options)
     loader = Loader(db)
 
     if type == "collection":
-        loader.load_collections(mappings, method=method)
+        loader.load_collections(mappings, insert_mode=method)
     elif type == "item":
-        loader.load_items(mappings, method=method)
+        loader.load_items(mappings, insert_mode=method)
     else:
         raise ValueError(f"invalid type: {type}")
