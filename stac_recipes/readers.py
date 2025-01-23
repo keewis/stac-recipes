@@ -52,9 +52,14 @@ def parse_extent(extent):
     return pystac.Extent.from_dict(prepared)
 
 
+def parse_providers(providers):
+    return [pystac.Provider.from_dict(provider) for provider in providers]
+
+
 def spec_to_pystac(colspec: dict) -> pystac.Collection:
     transformers = {
         "extent": parse_extent,
+        "providers": parse_providers,
     }
 
     processed = {k: transformers.get(k, lambda v: v)(v) for k, v in colspec.items()}
