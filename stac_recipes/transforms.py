@@ -47,7 +47,7 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
                 )
             ) from e
 
-        return postprocess(item, ds_)
+        return index, postprocess(item, ds_)
 
 
 @dataclass
