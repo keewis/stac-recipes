@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Literal
 
 import apache_beam as beam
 import pystac
@@ -214,6 +215,8 @@ class ToStaticJson(beam.PTransform):
 @dataclass
 class ToPgSTAC(beam.Transform):
     database_config: dict
+    type: Literal["collection"] | Literal["item"]
+    method: str = "upsert"
 
     def expand(self, pcoll):
         from stac_recipes.writers.pgstac import store_to_pgstac
