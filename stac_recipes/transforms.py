@@ -32,7 +32,18 @@ def create_stac_item(indexed, template, postprocess, xstac_kwargs=None):
             )
         except Exception as e:
             raise RuntimeError(
-                f"failed to extract metadata from dataset:\n{repr(ds)}"
+                "\n".join(
+                    [
+                        "failed to extract metadata from dataset:",
+                        repr(ds_),
+                        "coords attrs:",
+                        *(
+                            f"{name}: {coord.attrs}"
+                            for name, coord in ds_.coords.items()
+                        ),
+                        f"attrs:\n{ds_.attrs}",
+                    ]
+                )
             ) from e
 
         return postprocess(item, ds_)
