@@ -213,7 +213,7 @@ class ToStaticJson(beam.PTransform):
 
 
 @dataclass
-class ToPgSTAC(beam.Transform):
+class ToPgStac(beam.PTransform):
     database_config: dict
     type: Literal["collection"] | Literal["item"]
     method: str = "upsert"
