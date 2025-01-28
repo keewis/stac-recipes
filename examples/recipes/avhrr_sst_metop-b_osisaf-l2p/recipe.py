@@ -90,9 +90,7 @@ def create_collections(pipeline, database_config, collections_path):
 def create_items(pipeline, data_root, database_config, storage_kwargs):
     dates = pd.date_range("2016-01-19T08:07:03", "2024-12-31T23:59:59", freq="3min")
 
-    pattern = FilePattern(
-        curry(generate_url, data_root), dates[:4], file_type="netcdf4"
-    )
+    pattern = FilePattern(curry(generate_url, data_root), dates, file_type="netcdf4")
 
     return (
         pipeline
