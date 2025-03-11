@@ -7,7 +7,7 @@ from pypgstac.load import Loader
 ItemType = tuple[str, pystac.STACObject]
 
 
-def store_to_pgstac(objs: ItemType | Sequence[ItemType], *, type, method, options):
+def store_to_pgstac(objs: ItemType | Sequence[ItemType], *, type_, method, options):
     if not isinstance(objs, list):
         objs = [objs]
 
@@ -18,9 +18,9 @@ def store_to_pgstac(objs: ItemType | Sequence[ItemType], *, type, method, option
     db = PgstacDB(**options)
     loader = Loader(db)
 
-    if type == "collection":
+    if type_ == "collection":
         loader.load_collections(mappings, insert_mode=method)
-    elif type == "item":
+    elif type_ == "item":
         loader.load_items(mappings, insert_mode=method)
     else:
-        raise ValueError(f"invalid type: {type}")
+        raise ValueError(f"invalid type: {type_}")

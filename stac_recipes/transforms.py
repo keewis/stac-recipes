@@ -223,7 +223,7 @@ class ToPgStac(beam.PTransform):
 
         return pcoll | "Write items to database" >> beam.Map(
             store_to_pgstac,
-            type=self.type,
+            type_=self.type,
             options=self.database_config,
             method=self.method,
         )
