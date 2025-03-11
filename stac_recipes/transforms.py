@@ -212,6 +212,34 @@ class ToStaticJson(beam.PTransform):
         )
 
 
+class _WriteToPgStac(beam.DoFn):
+    def __init__(self, type_, method, options):
+        self.type_ = type_
+        self.method = method
+        self.options = options
+
+    def setup(self):
+        from pypgstac.db import PgstacDB
+
+        self.client = PgstacDB(**self.options)
+
+    def start_bundle(self):
+        self.bundle = []
+
+    def process(self, element):
+        self.bundle.append(element)
+
+    def finish_bundle(self):
+        from stac_recipes.writers.pgstac import store_to_pgstac
+
+        store_to_pgstac(
+            self.bundle, client=self.client, type_=self.type_, method=self.method
+        )
+
+    def teardown(self):
+        self.client.close()
+
+
 @dataclass
 class ToPgStac(beam.PTransform):
     database_config: dict
@@ -219,11 +247,10 @@ class ToPgStac(beam.PTransform):
     method: str = "upsert"
 
     def expand(self, pcoll):
-        from stac_recipes.writers.pgstac import store_to_pgstac
-
-        return pcoll | "Write items to database" >> beam.Map(
-            store_to_pgstac,
-            type_=self.type,
-            options=self.database_config,
-            method=self.method,
+        return pcoll | "Write items to database" >> beam.ParDo(
+            _WriteToPgStac(
+                type_=self.type,
+                options=self.database_config,
+                method=self.method,
+            )
         )
